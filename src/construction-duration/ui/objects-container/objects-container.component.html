@@ -1,0 +1,12 @@
+<mat-card class="mt-3"  *ngIf="records.length===0">
+  Список объектов пуст...
+</mat-card>
+<div class="mt-3" *ngFor="let obj of records; let i = index">
+  <app-object-record [record]="obj" (clickDelete)="deleteRecord($event)"></app-object-record>
+</div>
+<div class="mt-4">
+  <span>Добавить объект </span>
+  <button mat-mini-fab color="primary" class="margin-right margin-top" (click)="openSnipTable()">
+    <mat-icon>domain_add</mat-icon>
+  </button>
+</div>

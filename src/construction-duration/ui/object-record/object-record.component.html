@@ -1,0 +1,35 @@
+<mat-card>
+  <mat-card-subtitle>{{record.object}}</mat-card-subtitle>
+  <mat-card-content>
+    <div class="flex">
+          <mat-form-field class="margin-right item-1">
+            <mat-label>Наименование объекта</mat-label>
+            <input matInput [value]="!record.name?'':record.name" [formControl]="nameFormControl"
+                   [errorStateMatcher]="nameMatcher" #objectName>
+            <mat-error *ngIf="nameFormControl.hasError('required')">
+              Необходимо задать наименование
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="margin-right item-2">
+            <mat-label>{{record.attribute}}</mat-label>
+            <input matInput [value]="!record.value?'':record.value" [formControl]="valueFormControl"
+                   [errorStateMatcher]="valueMatcher">
+            <mat-error *ngIf="valueFormControl.hasError('required')">
+              Необходимо задать значение
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="margin-right item-2">
+            <mat-label>Ед. изм.</mat-label>
+            <input matInput readonly [value]="!record.unit?'':record.unit">
+          </mat-form-field>
+        </div>
+  </mat-card-content>
+  <mat-card-footer>
+    <button mat-button color="basic" [disabled]="delete_disabled" (click)="edit()" class="margin-top">
+      Редактировать
+    </button>
+    <button mat-button color="basic" [disabled]="delete_disabled" (click)="delete()" class="margin-top">
+      Удалить
+    </button>
+  </mat-card-footer>
+</mat-card>

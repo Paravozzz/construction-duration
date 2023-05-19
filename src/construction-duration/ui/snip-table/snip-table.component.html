@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>СНиП 1.04.03-85*</h2>
+<mat-dialog-content>
+  <table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="subsection">
+      <th mat-header-cell *matHeaderCellDef> Подраздел</th>
+      <td mat-cell *matCellDef="let element"> {{element.subsection}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="object">
+      <th mat-header-cell *matHeaderCellDef> Объект</th>
+      <td mat-cell *matCellDef="let element"> {{element.object}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="attribute">
+      <th mat-header-cell *matHeaderCellDef> Характеристика</th>
+      <td mat-cell *matCellDef="let element"> {{element.attribute}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="unit">
+      <th mat-header-cell *matHeaderCellDef> Ед. изм.</th>
+      <td mat-cell *matCellDef="let element"> {{element.unit}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="setSelected(row)" (dblclick)="onDblClick(row)"
+        [class.row-is-clicked]="selectedRow === row"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+  </mat-paginator>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Отмена</button>
+  <button mat-button [mat-dialog-close]="selectedRow" cdkFocusInitial [disabled]="!selectedRow">Ok</button>
+</mat-dialog-actions>

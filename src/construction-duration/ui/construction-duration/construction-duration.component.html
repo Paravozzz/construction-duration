@@ -1,0 +1,11 @@
+<div style="display: flex; justify-content: space-between">
+  <h2>Расчет продолжительности строительства</h2>
+  <button mat-raised-button color="primary" (click)="calculate()">
+    <span style="display: flex; align-items: center">
+      <mat-icon>functions</mat-icon>
+      <span>Выполнить расчёт</span>
+    </span>
+  </button>
+</div>
+
+<app-objects-container (recordsChanged)="updateObjects($event)"></app-objects-container>
