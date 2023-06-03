@@ -29,6 +29,7 @@ export class ConstructionDurationComponent implements OnInit {
       return;
     }
 
+    
 
 
   }
