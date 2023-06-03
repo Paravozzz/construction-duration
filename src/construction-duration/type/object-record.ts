@@ -1,9 +1,11 @@
 export interface ObjectRecord {
-  subsection: string,
-  object:string,
-  name?: string,
-  attribute: string,
-  value?: string,
-  values: string[],
-  unit: string
+  subsection: string, //Заголовок таблицы СП
+  object:string, //Столбец "Объект" из таблицы СП
+  name?: string, //Произвольное имя, которое ввёл пользователь (например Участок газопровода ПК15-ПК18)
+  attribute: string, //Столбец "Характиристика" из таблицы СП
+  value?: string, //Значение характеристики, которое ввёл пользоваетль
+  values: string[], //Допустимые значения из столбца "Характиристика",
+  values_type: 'single'|'range'|'mixed', //Тип значений, которые храняться (одиночные, диапазон, смешанные)
+  unit: string //Единица измерения Характеристики из таблицы СП 
+  duration: number[][] //Продолжительность строительства, мес
 }
