@@ -12,7 +12,9 @@ export class ObjectsContainerComponent {
 
   records: ObjectRecord[] = [];
 
-  @Output() recordsChanged: EventEmitter<ObjectRecord[]> = new EventEmitter();
+  @Output() add: EventEmitter<ObjectRecord> = new EventEmitter();
+  @Output() remove: EventEmitter<ObjectRecord> = new EventEmitter();
+  @Output() edit: EventEmitter<ObjectRecord> = new EventEmitter();
 
   constructor(private dialogService: DialogService) {
   }
@@ -26,16 +28,27 @@ export class ObjectsContainerComponent {
     });
   }
 
-  deleteRecord(record: ObjectRecord) {
-    const index = this.records.findIndex(value => value === record);
+  onRecorChanged(record: ObjectRecord): void {
+    const index = this.records.findIndex(value => value.id === record.id);
+    if (index === -1)
+      return;
+    
+    this.records[index].name = record.name;
+    this.records[index].value = record.value;
+    this.edit.emit(this.records[index]);
+  }
+
+  removeRecord(record: ObjectRecord) {
+    const index = this.records.findIndex(value => value.id === record.id);
     if (index === -1)
       return;
 
-    this.records.splice(index, 1);
+    this.remove.emit(this.records.splice(index, 1)[0]);
   }
 
   private addRecord(record: ObjectRecord) {
+    record.id = window.performance.now();
     this.records.push(record);
-    this.recordsChanged.emit(this.records);
+    this.add.emit(record);
   }
 }

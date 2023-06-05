@@ -8,4 +8,4 @@
   </button>
 </div>
 
-<app-objects-container (recordsChanged)="updateObjects($event)"></app-objects-container>
+<app-objects-container (add)="onObjContainerAddRecord($event)" (remove)="onObjContainerRemoveRecord($event)" (edit)="onObjContainerEditRecord($event)"></app-objects-container>

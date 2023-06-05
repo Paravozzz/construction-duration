@@ -1,4 +1,5 @@
 export interface ObjectRecord {
+  id?:number,
   subsection: string, //Заголовок таблицы СП
   object:string, //Столбец "Объект" из таблицы СП
   name?: string, //Произвольное имя, которое ввёл пользователь (например Участок газопровода ПК15-ПК18)
