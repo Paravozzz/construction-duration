@@ -28,13 +28,23 @@ export class ConstructionDurationComponent implements OnInit {
       })
       return;
     }
-
+    let result: string[] = [];
     for (const record of this.records) {
       const calculator = new SingleDurationCalculator(record);
       calculator.calculate();
-      console.log(calculator.text);
+      result.push(calculator.text);
     }
 
+    if (result.length === 0)
+      return;
+
+    this.dialogService.openDialog(AlertDialogTemplateComponent, {
+      data: {
+        title: "Результаты расчёта",
+        message: result.join("\n\n"),
+        buttonText: "Ok"
+      }
+    })
 
   }
 
