@@ -24,7 +24,7 @@ export class ObjectsContainerComponent {
     dialogRef.afterClosed().subscribe(record => {
       if (!record)
         return;
-      this.addRecord(record);
+      this.addRecord(JSON.parse(JSON.stringify(record)));
     });
   }
 

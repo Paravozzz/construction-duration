@@ -32,16 +32,20 @@ export class ConstructionDurationComponent implements OnInit {
     for (const record of this.records) {
       const calculator = new SingleDurationCalculator(record);
       calculator.calculate();
-      result.push(calculator.text);
+      result.push(`<strong>${record.name}</strong><br>${calculator.text}`);
     }
 
     if (result.length === 0)
       return;
 
+
+    let html = result.join("<br><br>");
+    html = html.replace(/\n/g, "<br>");
+    
     this.dialogService.openDialog(AlertDialogTemplateComponent, {
       data: {
         title: "Результаты расчёта",
-        message: result.join("\n\n"),
+        message: html,
         buttonText: "Ok"
       }
     })

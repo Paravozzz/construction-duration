@@ -140,6 +140,6 @@ export class SnipTableComponent implements AfterViewInit {
   }
 
   onDblClick(row: ObjectRecord) {
-    this.dialogRef.close(row);
+    this.dialogRef.close(JSON.parse(JSON.stringify(row)));
   }
 }

@@ -32,21 +32,25 @@ export class SingleDurationCalculator extends AbstractDurationCalculator {
 
     get text(): string {
         let text:string[] = [];
-        text.push(`Продолжительность строительства определена методом ${this.method.toLowerCase()}.`);
-        if (this.method === 'Экстраполяции'){
-            text.push(`${this.power_behavior} мощности составит:`);
-            text.push(`${this.power_formula} = ${this.power}%.`);
-            text.push(`${this.power_behavior} нормы продолжительности строительства составит:`);
-            text.push(`${this.duration_norm_formula} = ${this.duration_norm}%,`);
-            text.push('где: 0,3 -  коэффициент, показывающий, что на каждый процент изменения характеристики строящегося объекта продолжительность строительства изменяется на 0,3%.');
+        if(this.method === 'Интерполяции' || this.method === 'Экстраполяции') {
+            text.push(`Продолжительность строительства определена методом ${this.method.toLowerCase()}.`);
+            if (this.method === 'Экстраполяции'){
+                text.push(`${this.power_behavior} мощности составит:`);
+                text.push(`${this.power_formula} = ${Math.abs(this.power)}%.`);
+                text.push(`${this.power_behavior} нормы продолжительности строительства составит:`);
+                text.push(`${this.duration_norm_formula} = ${this.duration_norm}%,`);
+                text.push('где: 0,3 -  коэффициент, показывающий, что на каждый процент изменения характеристики строящегося объекта продолжительность строительства изменяется на 0,3%.');
+            } else if (this.method === 'Интерполяции') {
+                text.push(`Продолжительность строительства на единицу прироста мощности составляет:`);
+                text.push(`${this.duration_by_power_unit_formula}=${this.duration_by_power_unit} мес.`);
+                text.push(`Прирост мощности составляет:`);
+                text.push(`${this.power_gane_formula}=${this.power_gane}${this.objectRecord.unit}`);
+            }
+            text.push(`Продолжительность строительства с учетом ${this.method.toLowerCase()} будет равна:`);
+            text.push(`${this.duration_formula}=${this.duration} мес.`);
         } else {
-            text.push(`Продолжительность строительства на единицу прироста мощности составляет:`);
-            text.push(`${this.duration_by_power_unit_formula}=${this.duration_by_power_unit} мес.`);
-            text.push(`Прирост мощности составляет:`);
-            text.push(`${this.power_gane_formula}=${this.power_gane}${this.objectRecord.unit}`);
+            text.push(`Продолжительность строительства равна: T=${this.duration} мес.`);
         }
-        text.push(`Продолжительность строительства с учетом ${this.method.toLowerCase()} будет равна:`);
-        text.push(`${this.duration_formula}=${this.duration} мес.`)
         return text.join('\n');
     }
 
@@ -67,14 +71,27 @@ export class SingleDurationCalculator extends AbstractDurationCalculator {
         let dur_I:number | undefined;
         let dur_next:number | undefined;
         let extrapolation_value: number = 0;
-        
-        //выбираем тип расчёта - интерполяция или экстраполяция
-        if (this.objectRecord.value < this.objectRecord.values[0]) {
+        let extrapolation_duration: number = 0;
+        let exact_match: boolean = false; //Точное попадание в значение из таблицы. Интерполяция или экстраполяция не нужна.
+
+        //выбираем тип расчёта - точное попадание, интерполяция или экстраполяция
+        if (exact_match) {
+            for (let i = 0; i < this.objectRecord.values.length; i++) {
+                const current_val = Number.parseFloat(this.objectRecord.values[i]);
+                //TODO: Сравнить с заданной точностью
+                if () {
+                    this.duration = this.objectRecord.duration[i][0];
+                }
+            }
+        } else if (Number.parseFloat(this.objectRecord.value) < Number.parseFloat(this.objectRecord.values[0])) {
             this.method = 'Экстраполяции';
             extrapolation_value = Number.parseFloat(this.objectRecord.values[0]);
-        } else if (this.objectRecord.value > this.objectRecord.values[this.objectRecord.values.length-1]) {
+            extrapolation_duration = this.objectRecord.duration[0][0];
+        } else if (Number.parseFloat(this.objectRecord.value) > Number.parseFloat(this.objectRecord.values[this.objectRecord.values.length-1])) {
             this.method = 'Экстраполяции';
             extrapolation_value = Number.parseFloat(this.objectRecord.values[this.objectRecord.values.length-1]);
+            extrapolation_duration = this.objectRecord.duration[this.objectRecord.values.length-1][0];
+
         } else {
             this.method = 'Интерполяции';
             for (let i = 0; i < this.objectRecord.values.length - 1; i++) {
@@ -102,8 +119,8 @@ export class SingleDurationCalculator extends AbstractDurationCalculator {
             this.duration_norm_formula = `${Math.abs(this.power)}×0,3`;
             this.duration_norm = this.power * 0.3;
             //Продолжительность строительства с учетом экстраполяции составляет:
-            this.duration_formula=`Т=${extrapolation_value}×((100${this.duration_norm>=0?'+':''}${this.duration_norm}) /100)`;
-            this.duration = extrapolation_value*((100.0+this.duration_norm) /100.0);
+            this.duration_formula=`Т=${extrapolation_duration}×((100${this.duration_norm>=0?'+':''}${this.duration_norm}) /100)`;
+            this.duration = extrapolation_duration*((100.0+this.duration_norm) /100.0);
         } else if (this.method === 'Интерполяции') {
             if (!val_I || !val_next)
                 throw new Error('Значения для интерполяции не найдены!');
@@ -112,7 +129,7 @@ export class SingleDurationCalculator extends AbstractDurationCalculator {
                 throw new Error('Значения продолжительностей строительства для интерполяции не найдены!');
             
             //Продолжительность строительства на единицу прироста мощности составляет:
-            this.duration_by_power_unit_formula = `${Math.abs(dur_next)}-${Math.abs(dur_I)}/${Math.abs(val_next)}-${Math.abs(val_I)})`;
+            this.duration_by_power_unit_formula = `(${Math.abs(dur_next)}-${Math.abs(dur_I)})/(${Math.abs(val_next)}-${Math.abs(val_I)})`;
             this.duration_by_power_unit = Math.abs(dur_next - dur_I) / Math.abs(val_next - val_I);
             //Прирост мощности составляет:
             this.power_gane_formula = `${val}-${val_I}`;
